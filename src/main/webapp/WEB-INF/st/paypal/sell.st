@@ -1,0 +1,9 @@
+<html>
+	<head>
+		<title>Sell</title>
+	</head>
+	<body>
+		<h1>Sell.</h1>
+		$context.errors:{error|<div>$error$</div>}$
+	</body>
+</html>

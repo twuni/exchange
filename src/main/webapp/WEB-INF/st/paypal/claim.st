@@ -1,0 +1,9 @@
+<html>
+	<head>
+		<title>Claim</title>
+	</head>
+	<body>
+		<h1>Claim.</h1>
+		$context.errors:{error|<div>$error$</div>}$
+	</body>
+</html>
