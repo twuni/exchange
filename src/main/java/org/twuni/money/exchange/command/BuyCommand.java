@@ -1,4 +1,4 @@
-package org.twuni.money.exchange.command.paypal;
+package org.twuni.money.exchange.command;
 
 public class BuyCommand {
 

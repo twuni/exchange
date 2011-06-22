@@ -7,14 +7,14 @@
 
 		<h1>Exchange</h1>
 
-		<form method="post" action="from/paypal">
+		<form method="post" action="buy">
 			<fieldset>
 
 				<legend>Buy a Token</legend>
 
 				<div>
-					<label for="from-paypal_amount">Amount:</label>
-					<input type="text" id="from-paypal_amount" name="amount" value="" title="This is how much value the token you purchase will have."/>
+					<label for="buy_amount">Amount:</label>
+					<input type="text" id="buy_amount" name="amount" value="" title="This is how much value the token you purchase will have."/>
 				</div>
 
 				<button type="submit">Buy</button>
@@ -22,19 +22,19 @@
 			</fieldset>
 		</form>
 
-		<form method="post" action="to/paypal">
+		<form method="post" action="sell">
 			<fieldset>
 
 				<legend>Sell a Token</legend>
 
 				<div>
-					<label for="to-paypal_username">PayPal Username:</label>
-					<input type="text" id="to-paypal_username" name="username" value="" title="This is the username who will be paid."/>
+					<label for="sell_username">PayPal Username:</label>
+					<input type="text" id="sell_username" name="username" value="" title="This is the username who will be paid."/>
 				</div>
 
 				<div>
-					<label for="to-paypal_token">Token:</label>
-					<textarea id="to-paypal_token" name="token"></textarea>
+					<label for="sell_token">Token:</label>
+					<textarea id="sell_token" name="token"></textarea>
 				</div>
 
 				<button type="submit">Sell</button>

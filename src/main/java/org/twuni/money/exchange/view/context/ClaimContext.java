@@ -1,8 +1,7 @@
-package org.twuni.money.exchange.view.context.paypal;
+package org.twuni.money.exchange.view.context;
 
 import org.twuni.money.common.Token;
-import org.twuni.money.exchange.command.paypal.ClaimCommand;
-import org.twuni.money.exchange.view.context.ViewContext;
+import org.twuni.money.exchange.command.ClaimCommand;
 
 public class ClaimContext extends ViewContext {
 

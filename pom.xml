@@ -7,7 +7,7 @@
 	<artifactId>exchange</artifactId>
 	<version>0.2.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	
+
 	<name>Exchange</name>
 	<description>
 		The Exchange is a web application designed to facilitate the transfer of funds
@@ -83,17 +83,32 @@
 			<artifactId>stringtemplate</artifactId>
 			<version>3.2.1</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.6.1</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.6.1</version>
 			<scope>runtime</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>net.authorize</groupId>
+			<artifactId>anet-java-sdk</artifactId>
+			<version>1.4.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.1.1</version>
+		</dependency>
+
 	</dependencies>
 
 </project>

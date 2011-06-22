@@ -1,7 +1,6 @@
-package org.twuni.money.exchange.view.context.paypal;
+package org.twuni.money.exchange.view.context;
 
-import org.twuni.money.exchange.command.paypal.BuyCommand;
-import org.twuni.money.exchange.view.context.ViewContext;
+import org.twuni.money.exchange.command.BuyCommand;
 
 public class BuyContext extends ViewContext {
 
