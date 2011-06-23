@@ -1,9 +1,9 @@
-package org.twuni.money.exchange.view.context;
+package org.twuni.money.exchange.web.model;
 
 import org.twuni.money.common.Token;
-import org.twuni.money.exchange.command.SellCommand;
+import org.twuni.money.exchange.web.command.SellCommand;
 
-public class SellContext extends ViewContext {
+public class SellContext extends Context {
 
 	private final SellCommand command;
 	private Token token;

@@ -1,9 +1,9 @@
-package org.twuni.money.exchange.view.context;
+package org.twuni.money.exchange.web.model;
 
 import org.twuni.money.common.Token;
-import org.twuni.money.exchange.command.ClaimCommand;
+import org.twuni.money.exchange.web.command.ClaimCommand;
 
-public class ClaimContext extends ViewContext {
+public class ClaimContext extends Context {
 
 	private final ClaimCommand command;
 	private Token token;

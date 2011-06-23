@@ -1,4 +1,4 @@
-package org.twuni.money.exchange.controller;
+package org.twuni.money.exchange.web.controller;
 
 import java.io.IOException;
 
@@ -21,15 +21,15 @@ import org.twuni.money.common.Treasury;
 import org.twuni.money.common.TreasuryClient;
 import org.twuni.money.exchange.Application;
 import org.twuni.money.exchange.client.PaymentClient;
-import org.twuni.money.exchange.command.BuyCommand;
-import org.twuni.money.exchange.command.ClaimCommand;
-import org.twuni.money.exchange.command.SellCommand;
 import org.twuni.money.exchange.exception.PaymentException;
 import org.twuni.money.exchange.model.Payment;
 import org.twuni.money.exchange.util.Validator;
-import org.twuni.money.exchange.view.context.ClaimContext;
-import org.twuni.money.exchange.view.context.SellContext;
-import org.twuni.money.exchange.view.context.ViewContext;
+import org.twuni.money.exchange.web.command.BuyCommand;
+import org.twuni.money.exchange.web.command.ClaimCommand;
+import org.twuni.money.exchange.web.command.SellCommand;
+import org.twuni.money.exchange.web.model.ClaimContext;
+import org.twuni.money.exchange.web.model.SellContext;
+import org.twuni.money.exchange.web.model.Context;
 
 import com.google.gson.Gson;
 
@@ -85,7 +85,7 @@ public class PaymentController {
 
 		paymentRepository.save( payment );
 
-		return new ModelAndView( "claim", ViewContext.NAME, context );
+		return new ModelAndView( "claim", Context.NAME, context );
 
 	}
 
@@ -120,7 +120,7 @@ public class PaymentController {
 			context.getErrors().put( "token", exception.getMessage() );
 		}
 
-		return new ModelAndView( "sell", ViewContext.NAME, context );
+		return new ModelAndView( "sell", Context.NAME, context );
 
 	}
 

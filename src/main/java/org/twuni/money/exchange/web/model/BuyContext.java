@@ -1,8 +1,8 @@
-package org.twuni.money.exchange.view.context;
+package org.twuni.money.exchange.web.model;
 
-import org.twuni.money.exchange.command.BuyCommand;
+import org.twuni.money.exchange.web.command.BuyCommand;
 
-public class BuyContext extends ViewContext {
+public class BuyContext extends Context {
 
 	private final BuyCommand command;
 

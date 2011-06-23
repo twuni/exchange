@@ -1,4 +1,4 @@
-package org.twuni.money.exchange.command;
+package org.twuni.money.exchange.web.command;
 
 public class BuyCommand {
 

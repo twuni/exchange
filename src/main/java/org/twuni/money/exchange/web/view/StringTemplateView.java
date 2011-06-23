@@ -1,4 +1,4 @@
-package org.twuni.money.exchange.view;
+package org.twuni.money.exchange.web.view;
 
 import java.io.IOException;
 import java.io.PrintWriter;
