@@ -1,8 +1,11 @@
-package org.twuni.money.exchange.client.anet;
+package org.twuni.money.exchange.anet.client;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+/**
+ * An enumeration of all known relevant Authorize.net request parameters.
+ */
 public enum AnetParameter {
 
 	VERSION( "x_version" ),

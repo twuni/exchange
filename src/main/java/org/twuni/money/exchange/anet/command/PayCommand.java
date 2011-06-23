@@ -1,4 +1,4 @@
-package org.twuni.money.exchange.client.anet;
+package org.twuni.money.exchange.anet.command;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,18 +7,19 @@ import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.twuni.money.exchange.anet.client.AnetClient;
+import org.twuni.money.exchange.anet.client.AnetParameter;
 
-public class AnetPaymentClient {
+/**
+ * This command sends a payment to Authorize.net for processing.
+ */
+public class PayCommand extends Command {
 
-	private final AnetClient client;
-	private final String url;
-
-	public AnetPaymentClient( AnetClient client, String url ) {
-		this.client = client;
-		this.url = url;
+	public PayCommand( AnetClient client, String url ) {
+		super( client, url );
 	}
 
-	public void pay( String accountNumber, String expirationDate, float amount, String relayUrl, long invoiceNumber, String notes ) throws ClientProtocolException, IOException {
+	public void execute( String accountNumber, String expirationDate, float amount, String relayUrl, long invoiceNumber, String notes ) throws ClientProtocolException, IOException {
 
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
 
@@ -31,9 +32,7 @@ public class AnetPaymentClient {
 		    AnetParameter.NOTES.toNameValuePair( notes )
 		} ) );
 
-		parameters.addAll( client.getFingerprint( amount ) );
-
-		client.post( url, parameters );
+		execute( parameters, amount );
 
 	}
 

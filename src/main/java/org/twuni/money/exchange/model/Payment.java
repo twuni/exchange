@@ -5,7 +5,7 @@ import org.twuni.money.common.Token;
 public class Payment {
 
 	private String id;
-	private float paymentAmount;
+	private float amount;
 	private Token token;
 
 	public String getId() {
@@ -16,12 +16,12 @@ public class Payment {
 		this.id = id;
 	}
 
-	public float getPaymentAmount() {
-		return paymentAmount;
+	public float getAmount() {
+		return amount;
 	}
 
-	public void setPaymentAmount( float paymentAmount ) {
-		this.paymentAmount = paymentAmount;
+	public void setAmount( float amount ) {
+		this.amount = amount;
 	}
 
 	public void setToken( Token token ) {

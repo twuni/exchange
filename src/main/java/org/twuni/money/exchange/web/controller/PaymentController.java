@@ -79,7 +79,7 @@ public class PaymentController {
 
 		paymentClient.validate( payment );
 
-		float paymentAmount = payment.getPaymentAmount();
+		float paymentAmount = payment.getAmount();
 		int amount = toTokenValue( paymentAmount );
 		payment.setToken( bank.withdraw( amount ) );
 

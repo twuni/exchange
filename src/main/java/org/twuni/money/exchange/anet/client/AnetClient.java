@@ -1,4 +1,4 @@
-package org.twuni.money.exchange.client.anet;
+package org.twuni.money.exchange.anet.client;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -13,6 +13,10 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.twuni.money.exchange.client.HttpClientWrapper;
 
+/**
+ * This convenient wrapper handles communications logic with Authorize.net that is common to all
+ * requests and responses from this application.
+ */
 public class AnetClient {
 
 	private static final float API_VERSION = 3.1f;
