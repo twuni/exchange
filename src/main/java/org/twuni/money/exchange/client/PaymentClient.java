@@ -1,30 +1,14 @@
 package org.twuni.money.exchange.client;
 
-import org.apache.http.client.HttpClient;
 import org.twuni.money.exchange.model.Payment;
 import org.twuni.money.exchange.util.Validator;
 
-public class PaymentClient implements Validator<Payment> {
+public interface PaymentClient extends Validator<Payment> {
 
-	protected final HttpClientWrapper client;
+	public void pay( String username, float amount );
 
-	public PaymentClient( HttpClient client ) {
-		this.client = new HttpClientWrapper( client );
-	}
+	public String getPaymentUrl( float amountDue );
 
-	@Override
-	public void validate( Payment payment ) {
-	}
-
-	public void pay( String username, float amount ) {
-	}
-
-	public String getPaymentUrl( float amountDue ) {
-		return "https://www.example.com";
-	}
-
-	public float getExchangeRate() {
-		return 0.01f;
-	}
+	public float getExchangeRate();
 
 }
