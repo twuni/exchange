@@ -19,11 +19,12 @@ import org.twuni.money.common.SimpleToken;
 import org.twuni.money.common.Token;
 import org.twuni.money.common.Treasury;
 import org.twuni.money.common.TreasuryClient;
+import org.twuni.money.exchange.Application;
 import org.twuni.money.exchange.client.PaymentClient;
-import org.twuni.money.exchange.client.exception.PaymentException;
 import org.twuni.money.exchange.command.BuyCommand;
 import org.twuni.money.exchange.command.ClaimCommand;
 import org.twuni.money.exchange.command.SellCommand;
+import org.twuni.money.exchange.exception.PaymentException;
 import org.twuni.money.exchange.model.Payment;
 import org.twuni.money.exchange.util.Validator;
 import org.twuni.money.exchange.view.context.ClaimContext;
@@ -36,6 +37,9 @@ import com.google.gson.Gson;
 public class PaymentController {
 
 	private final Logger log = LoggerFactory.getLogger( getClass() );
+
+	@Autowired
+	private Application application;
 
 	@Autowired
 	private HttpClient httpClient;
@@ -66,7 +70,7 @@ public class PaymentController {
 	@RequestMapping( value = "/claim", method = RequestMethod.POST )
 	public ModelAndView claim( @ModelAttribute ClaimCommand command ) {
 
-		Treasury treasury = new TreasuryClient( httpClient, "money.twuni.org" );
+		Treasury treasury = new TreasuryClient( httpClient, application.getPreferredTreasury() );
 		Bank bank = new Bank( tokenRepository, treasury );
 
 		ClaimContext context = new ClaimContext( command );

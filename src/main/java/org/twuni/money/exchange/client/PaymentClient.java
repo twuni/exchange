@@ -6,14 +6,14 @@ import org.twuni.money.exchange.util.Validator;
 
 public class PaymentClient implements Validator<Payment> {
 
-	protected final HttpClient client;
+	protected final HttpClientWrapper client;
 
 	public PaymentClient( HttpClient client ) {
-		this.client = client;
+		this.client = new HttpClientWrapper( client );
 	}
 
 	@Override
-	public void validate( Payment transaction ) {
+	public void validate( Payment payment ) {
 	}
 
 	public void pay( String username, float amount ) {

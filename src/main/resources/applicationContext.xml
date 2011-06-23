@@ -6,15 +6,40 @@
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-	"
->
+	">
 
 	<context:component-scan base-package="org.twuni.money.exchange"/>
-	
+
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="viewClass" value="org.twuni.money.exchange.view.StringTemplateView"/>
 		<property name="prefix" value="/WEB-INF/st/"/>
 		<property name="suffix" value=".st"/>
+	</bean>
+
+	<bean id="httpClient" class="org.apache.http.impl.client.DefaultHttpClient"/>
+	
+	<bean id="paymentClient" class="org.twuni.money.exchange.client.anet.AnetPaymentClient">
+		<constructor-arg index="0">
+			<bean class="org.twuni.money.exchange.client.anet.AnetClient">
+				<constructor-arg index="0" ref="httpClient"/>
+				<constructor-arg index="1" value="4ma69DX7P39"/>
+				<constructor-arg index="2" value="8CXrE6rTA265m25c"/>
+				<constructor-arg index="3" value="false"/>
+			</bean>
+		</constructor-arg>
+		<constructor-arg index="1" value="https://test.authorize.net/gateway/transact.dll"/>
+	</bean>
+	
+	<bean id="application" class="org.twuni.money.exchange.Application">
+		<property name="preferredTreasury" value="money.twuni.org"/>
+	</bean>
+
+	<bean id="treasuryValidator" class="org.twuni.money.exchange.util.StringArrayValidator">
+		<constructor-arg>
+			<array>
+				<value>money.twuni.org</value>
+			</array>
+		</constructor-arg>
 	</bean>
 
 </beans>
