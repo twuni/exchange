@@ -41,6 +41,16 @@ import com.google.gson.Gson;
 @Controller
 public class PaymentController {
 
+	private class Path {
+
+		static final String FORM = "/*";
+		static final String BUY = "/buy";
+		static final String PAY = "/pay";
+		static final String SELL = "/sell";
+		static final String CLAIM = "/claim";
+
+	}
+
 	private final Logger log = LoggerFactory.getLogger( getClass() );
 
 	@Autowired
@@ -64,12 +74,12 @@ public class PaymentController {
 	@Autowired
 	private Validator<String> treasuryValidator;
 
-	@RequestMapping( value = "/*", method = RequestMethod.GET )
+	@RequestMapping( value = Path.FORM, method = RequestMethod.GET )
 	public String showForm() {
 		return "form";
 	}
 
-	@RequestMapping( value = "/buy", method = RequestMethod.POST )
+	@RequestMapping( value = Path.BUY, method = RequestMethod.POST )
 	public ModelAndView buy( @ModelAttribute BuyCommand command ) {
 
 		BuyContext context = new BuyContext( command );
@@ -80,10 +90,10 @@ public class PaymentController {
 
 	}
 
-	@RequestMapping( value = "/pay", method = RequestMethod.POST )
+	@RequestMapping( value = Path.PAY, method = RequestMethod.POST )
 	public void pay( @RequestParam String accountNumber, @RequestParam String expirationDate, @RequestParam float amount, HttpServletResponse response ) throws IOException {
 
-		String relayUrl = "https://money.twuni.org/exchange/claim";
+		String relayUrl = application.getUrl( Path.CLAIM );
 		long invoiceNumber = System.currentTimeMillis();
 		String notes = "";
 		String result = payCommand.execute( accountNumber, expirationDate, amount, relayUrl, invoiceNumber, notes );
@@ -96,7 +106,7 @@ public class PaymentController {
 
 	}
 
-	@RequestMapping( value = "/claim", method = RequestMethod.POST )
+	@RequestMapping( value = Path.CLAIM, method = RequestMethod.POST )
 	public ModelAndView claim( @RequestParam( "AMOUNT" ) float amount, @RequestParam( "TRANSACTION_ID" ) String transactionId, @RequestParam( "MD5_HASH" ) String signature ) {
 
 		ClaimContext context = new ClaimContext( new org.twuni.money.exchange.web.command.ClaimCommand( amount, signature, transactionId ) );
@@ -128,7 +138,7 @@ public class PaymentController {
 		return bank;
 	}
 
-	@RequestMapping( value = "/sell", method = RequestMethod.POST )
+	@RequestMapping( value = Path.SELL, method = RequestMethod.POST )
 	public ModelAndView sell( @ModelAttribute SellCommand command ) {
 
 		SellContext context = new SellContext( command );
