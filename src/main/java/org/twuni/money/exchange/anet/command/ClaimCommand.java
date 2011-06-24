@@ -1,12 +1,7 @@
 package org.twuni.money.exchange.anet.command;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.twuni.money.exchange.anet.client.AnetClient;
 
 /**
@@ -18,14 +13,8 @@ public class ClaimCommand extends Command {
 		super( client, url );
 	}
 
-	public void execute(/* TODO: Add some parameters. */) throws UnsupportedEncodingException, ClientProtocolException, IOException {
-
-		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-
-		// TODO: Add some parameters.
-
-		execute( parameters );
-
+	public void execute( String amount, String transactionId, String signature ) throws IOException {
+		client.getSignatureValidator( amount, transactionId ).validate( signature );
 	}
 
 }

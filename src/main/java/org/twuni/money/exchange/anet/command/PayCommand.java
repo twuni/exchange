@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.twuni.money.exchange.anet.client.AnetClient;
 import org.twuni.money.exchange.anet.client.AnetParameter;
 
@@ -19,7 +18,7 @@ public class PayCommand extends Command {
 		super( client, url );
 	}
 
-	public void execute( String accountNumber, String expirationDate, float amount, String relayUrl, long invoiceNumber, String notes ) throws ClientProtocolException, IOException {
+	public void execute( String accountNumber, String expirationDate, float amount, String relayUrl, long invoiceNumber, String notes ) throws IOException {
 
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
 

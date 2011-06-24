@@ -28,8 +28,8 @@ import org.twuni.money.exchange.web.command.BuyCommand;
 import org.twuni.money.exchange.web.command.ClaimCommand;
 import org.twuni.money.exchange.web.command.SellCommand;
 import org.twuni.money.exchange.web.model.ClaimContext;
-import org.twuni.money.exchange.web.model.SellContext;
 import org.twuni.money.exchange.web.model.Context;
+import org.twuni.money.exchange.web.model.SellContext;
 
 import com.google.gson.Gson;
 
