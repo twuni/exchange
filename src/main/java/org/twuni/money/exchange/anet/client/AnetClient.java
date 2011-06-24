@@ -6,12 +6,11 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.List;
 
-import net.authorize.sim.Fingerprint;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.twuni.money.exchange.client.HttpClientWrapper;
+import org.twuni.money.exchange.util.EncryptionUtils;
 import org.twuni.money.exchange.util.Validator;
 
 /**
@@ -51,12 +50,29 @@ public class AnetClient {
 
 	public List<NameValuePair> getFingerprint( float amount ) {
 
-		Fingerprint fingerprint = Fingerprint.createFingerprint( loginId, transactionKey, random.nextLong(), Float.toString( amount ) );
+		long sequence = random.nextInt( 10000 ) * 1000 + random.nextInt( 1000 );
+		long timestamp = System.currentTimeMillis() / 1000;
+		String signature = null;
+
+		StringBuilder message = new StringBuilder();
+
+		message.append( loginId ).append( "^" );
+		message.append( sequence ).append( "^" );
+		message.append( timestamp ).append( "^" );
+		message.append( amount ).append( "^" );
+
+		try {
+
+			signature = EncryptionUtils.getEncryptedHexString( message.toString(), transactionKey, "HmacMD5" );
+
+		} catch( Exception exception ) {
+			throw new RuntimeException( exception );
+		}
 
 		return Arrays.asList( new NameValuePair [] {
-		    AnetParameter.FINGERPRINT_SEQUENCE.toNameValuePair( fingerprint.getSequence() ),
-		    AnetParameter.FINGERPRINT_TIMESTAMP.toNameValuePair( fingerprint.getTimeStamp() ),
-		    AnetParameter.FINGERPRINT_HASH.toNameValuePair( fingerprint.getFingerprintHash() )
+		    AnetParameter.FINGERPRINT_SEQUENCE.toNameValuePair( sequence ),
+		    AnetParameter.FINGERPRINT_TIMESTAMP.toNameValuePair( timestamp ),
+		    AnetParameter.FINGERPRINT_HASH.toNameValuePair( signature )
 		} );
 
 	}
