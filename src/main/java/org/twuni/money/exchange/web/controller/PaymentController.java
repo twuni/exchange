@@ -103,16 +103,8 @@ public class PaymentController {
 		Bank bank = getBank();
 
 		try {
-			String id = "IicF0Ip52BOIJ/lfBkeTVri2vjN1sUdjZPh8yJc5a6s=";
-			String secret = "czC4gI4tzUaAxXgBwBu78JRC7EdjewXYaXK3AOm/B+c=";
-			bank.deposit( new SimpleToken( "money.twuni.org", id, secret, 10000 ) );
-		} catch( RuntimeException exception ) {
-			log.info( "Initial deposit failed.", exception );
-		}
 
-		try {
-
-			// claimCommand.execute( amount, transactionId, signature );
+			claimCommand.execute( amount, transactionId, signature );
 
 			Token token = bank.withdraw( toTokenValue( amount ) );
 
