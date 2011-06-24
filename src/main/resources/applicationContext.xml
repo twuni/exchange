@@ -22,7 +22,8 @@
 		<constructor-arg index="0" ref="httpClient"/>
 		<constructor-arg index="1" value="4ma69DX7P39"/>
 		<constructor-arg index="2" value="8CXrE6rTA265m25c"/>
-		<constructor-arg index="3" value="false"/>
+		<constructor-arg index="3" value=""/>
+		<constructor-arg index="4" value="false"/>
 	</bean>
 
 	<bean id="payCommand" class="org.twuni.money.exchange.anet.command.PayCommand">	

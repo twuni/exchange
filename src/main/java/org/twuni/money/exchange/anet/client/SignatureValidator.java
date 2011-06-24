@@ -11,10 +11,10 @@ public class SignatureValidator implements Validator<String> {
 
 	private final String loginId;
 	private final String secret;
-	private final String amount;
+	private final float amount;
 	private final String transactionId;
 
-	public SignatureValidator( String loginId, String secret, String amount, String transactionId ) {
+	public SignatureValidator( String loginId, String secret, float amount, String transactionId ) {
 		this.loginId = loginId;
 		this.secret = secret;
 		this.amount = amount;

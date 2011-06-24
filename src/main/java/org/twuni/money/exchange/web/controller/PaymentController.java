@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.twuni.money.common.Bank;
 import org.twuni.money.common.Repository;
@@ -20,6 +21,7 @@ import org.twuni.money.common.Token;
 import org.twuni.money.common.Treasury;
 import org.twuni.money.common.TreasuryClient;
 import org.twuni.money.exchange.Application;
+import org.twuni.money.exchange.anet.client.AnetClient;
 import org.twuni.money.exchange.client.PaymentClient;
 import org.twuni.money.exchange.exception.PaymentException;
 import org.twuni.money.exchange.model.Payment;
@@ -37,6 +39,9 @@ import com.google.gson.Gson;
 public class PaymentController {
 
 	private final Logger log = LoggerFactory.getLogger( getClass() );
+
+	@Autowired
+	private AnetClient anetClient;
 
 	@Autowired
 	private Application application;
@@ -68,23 +73,21 @@ public class PaymentController {
 	}
 
 	@RequestMapping( value = "/claim", method = RequestMethod.POST )
-	public ModelAndView claim( @ModelAttribute ClaimCommand command ) {
+	public ModelAndView claim( @RequestParam( "AMOUNT" ) float amount, @RequestParam( "TRANSACTION_ID" ) String transactionId, @RequestParam( "MD5_HASH" ) String signature ) {
 
 		Treasury treasury = new TreasuryClient( httpClient, application.getPreferredTreasury() );
 		Bank bank = new Bank( tokenRepository, treasury );
 
-		ClaimContext context = new ClaimContext( command );
+		anetClient.getSignatureValidator( amount, transactionId ).validate( signature );
 
-		Payment payment = command.getPayment();
+		Token token = bank.withdraw( toTokenValue( amount ) );
 
-		paymentClient.validate( payment );
-
-		float paymentAmount = payment.getAmount();
-		int amount = toTokenValue( paymentAmount );
-		payment.setToken( bank.withdraw( amount ) );
+		Payment payment = new Payment( amount, transactionId, token );
 
 		paymentRepository.save( payment );
 
+		ClaimContext context = new ClaimContext( new ClaimCommand( amount, signature, transactionId ) );
+		context.setPayment( payment );
 		return new ModelAndView( "claim", Context.NAME, context );
 
 	}

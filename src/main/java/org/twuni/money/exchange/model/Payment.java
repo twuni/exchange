@@ -4,16 +4,26 @@ import org.twuni.money.common.Token;
 
 public class Payment {
 
-	private String id;
+	private Integer id;
+	private String transactionId;
 	private float amount;
 	private Token token;
 
-	public String getId() {
-		return id;
+	public Payment() {
 	}
 
-	public void setId( String id ) {
-		this.id = id;
+	public Payment( float amount, String transactionId, Token token ) {
+		this.amount = amount;
+		this.transactionId = transactionId;
+		this.token = token;
+	}
+
+	public String getTransactionId() {
+		return transactionId;
+	}
+
+	public void setTransactionId( String id ) {
+		this.transactionId = id;
 	}
 
 	public float getAmount() {
@@ -30,6 +40,14 @@ public class Payment {
 
 	public Token getToken() {
 		return token;
+	}
+
+	public void setId( Integer id ) {
+		this.id = id;
+	}
+
+	public Integer getId() {
+		return id;
 	}
 
 }

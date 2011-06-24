@@ -1,12 +1,12 @@
 package org.twuni.money.exchange.web.model;
 
-import org.twuni.money.common.Token;
+import org.twuni.money.exchange.model.Payment;
 import org.twuni.money.exchange.web.command.ClaimCommand;
 
 public class ClaimContext extends Context {
 
 	private final ClaimCommand command;
-	private Token token;
+	private Payment payment;
 
 	public ClaimContext( ClaimCommand command ) {
 		this.command = command;
@@ -16,12 +16,12 @@ public class ClaimContext extends Context {
 		return command;
 	}
 
-	public void setToken( Token token ) {
-		this.token = token;
+	public void setPayment( Payment payment ) {
+		this.payment = payment;
 	}
 
-	public Token getToken() {
-		return token;
+	public Payment getPayment() {
+		return payment;
 	}
 
 }

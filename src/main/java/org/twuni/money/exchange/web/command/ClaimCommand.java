@@ -1,17 +1,42 @@
 package org.twuni.money.exchange.web.command;
 
-import org.twuni.money.exchange.model.Payment;
-
 public class ClaimCommand {
 
-	private Payment transaction;
+	private float amount;
+	private String transactionId;
+	private String signature;
 
-	public void setTransaction( Payment transaction ) {
-		this.transaction = transaction;
+	public ClaimCommand() {
 	}
 
-	public Payment getPayment() {
-		return transaction;
+	public ClaimCommand( float amount, String transactionId, String signature ) {
+		this.amount = amount;
+		this.transactionId = transactionId;
+		this.signature = signature;
+	}
+
+	public float getAmount() {
+		return amount;
+	}
+
+	public void setAmount( float amount ) {
+		this.amount = amount;
+	}
+
+	public String getTransactionId() {
+		return transactionId;
+	}
+
+	public void setTransactionId( String transactionId ) {
+		this.transactionId = transactionId;
+	}
+
+	public String getSignature() {
+		return signature;
+	}
+
+	public void setSignature( String signature ) {
+		this.signature = signature;
 	}
 
 }

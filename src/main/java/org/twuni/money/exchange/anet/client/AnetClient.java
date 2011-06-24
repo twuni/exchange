@@ -66,7 +66,7 @@ public class AnetClient {
 		http.post( url, parameters );
 	}
 
-	public Validator<String> getSignatureValidator( String amount, String transactionId ) {
+	public Validator<String> getSignatureValidator( float amount, String transactionId ) {
 		return new SignatureValidator( loginId, secret, amount, transactionId );
 	}
 
