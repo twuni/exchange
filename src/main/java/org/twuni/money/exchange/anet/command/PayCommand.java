@@ -18,7 +18,7 @@ public class PayCommand extends Command {
 		super( client, url );
 	}
 
-	public void execute( String accountNumber, String expirationDate, float amount, String relayUrl, long invoiceNumber, String notes ) throws IOException {
+	public String execute( String accountNumber, String expirationDate, float amount, String relayUrl, long invoiceNumber, String notes ) throws IOException {
 
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
 
@@ -31,7 +31,7 @@ public class PayCommand extends Command {
 		    AnetParameter.NOTES.toNameValuePair( notes )
 		} ) );
 
-		execute( parameters, amount );
+		return execute( parameters, amount );
 
 	}
 

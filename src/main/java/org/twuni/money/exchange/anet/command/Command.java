@@ -17,13 +17,13 @@ abstract class Command {
 		this.url = url;
 	}
 
-	protected void execute( List<NameValuePair> parameters ) throws IOException {
-		client.post( url, parameters );
+	protected String execute( List<NameValuePair> parameters ) throws IOException {
+		return client.post( url, parameters );
 	}
 
-	protected void execute( List<NameValuePair> parameters, float amount ) throws IOException {
+	protected String execute( List<NameValuePair> parameters, float amount ) throws IOException {
 		parameters.addAll( client.getFingerprint( amount ) );
-		execute( parameters );
+		return execute( parameters );
 	}
 
 }

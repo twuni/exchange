@@ -30,8 +30,8 @@ public class AnetClient {
 	private final String secret;
 	private final boolean testMode;
 
-	public AnetClient( HttpClient http, String loginId, String transactionKey, String secret, boolean testMode ) {
-		this.http = new HttpClientWrapper( http );
+	public AnetClient( HttpClient client, String loginId, String transactionKey, String secret, boolean testMode ) {
+		this.http = new HttpClientWrapper( client );
 		this.loginId = loginId;
 		this.transactionKey = transactionKey;
 		this.secret = secret;
@@ -77,9 +77,9 @@ public class AnetClient {
 
 	}
 
-	public void post( String url, List<NameValuePair> parameters ) throws UnsupportedEncodingException, ClientProtocolException, IOException {
+	public String post( String url, List<NameValuePair> parameters ) throws UnsupportedEncodingException, ClientProtocolException, IOException {
 		parameters.addAll( getGlobalParameters() );
-		http.post( url, parameters );
+		return http.post( url, parameters );
 	}
 
 	public Validator<String> getSignatureValidator( float amount, String transactionId ) {

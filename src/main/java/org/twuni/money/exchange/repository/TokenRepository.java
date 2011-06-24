@@ -1,34 +1,19 @@
 package org.twuni.money.exchange.repository;
 
-import java.util.List;
-
-import org.twuni.money.common.Repository;
 import org.twuni.money.common.Token;
+import org.twuni.money.exchange.model.TokenEntity;
 
 @org.springframework.stereotype.Repository
-public class TokenRepository implements Repository<String, Token> {
+public class TokenRepository extends HibernateTokenRepository {
 
 	@Override
 	public void delete( Token token ) {
-	}
-
-	@Override
-	public Token findById( String id ) {
-		return null;
-	}
-
-	@Override
-	public List<Token> list() {
-		return null;
-	}
-
-	@Override
-	public List<Token> list( int limit ) {
-		return null;
+		super.delete( new TokenEntity( token ) );
 	}
 
 	@Override
 	public void save( Token token ) {
+		super.save( new TokenEntity( token ) );
 	}
 
 }

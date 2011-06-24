@@ -9,6 +9,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.BasicResponseHandler;
 
 public class HttpClientWrapper {
 
@@ -18,10 +19,10 @@ public class HttpClientWrapper {
 		this.client = client;
 	}
 
-	public void post( String url, List<NameValuePair> parameters ) throws UnsupportedEncodingException, IOException, ClientProtocolException {
+	public String post( String url, List<NameValuePair> parameters ) throws UnsupportedEncodingException, IOException, ClientProtocolException {
 		HttpPost post = new HttpPost( url );
 		post.setEntity( new UrlEncodedFormEntity( parameters ) );
-		client.execute( post );
+		return client.execute( post, new BasicResponseHandler() );
 	}
 
 }

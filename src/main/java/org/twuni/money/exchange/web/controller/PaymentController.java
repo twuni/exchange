@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,36 +22,38 @@ import org.twuni.money.common.Token;
 import org.twuni.money.common.Treasury;
 import org.twuni.money.common.TreasuryClient;
 import org.twuni.money.exchange.Application;
-import org.twuni.money.exchange.anet.client.AnetClient;
-import org.twuni.money.exchange.client.PaymentClient;
+import org.twuni.money.exchange.anet.command.ClaimCommand;
+import org.twuni.money.exchange.anet.command.PayCommand;
 import org.twuni.money.exchange.exception.PaymentException;
+import org.twuni.money.exchange.exception.ValidationException;
 import org.twuni.money.exchange.model.Payment;
 import org.twuni.money.exchange.util.Validator;
 import org.twuni.money.exchange.web.command.BuyCommand;
-import org.twuni.money.exchange.web.command.ClaimCommand;
 import org.twuni.money.exchange.web.command.SellCommand;
+import org.twuni.money.exchange.web.model.BuyContext;
 import org.twuni.money.exchange.web.model.ClaimContext;
 import org.twuni.money.exchange.web.model.Context;
 import org.twuni.money.exchange.web.model.SellContext;
 
 import com.google.gson.Gson;
 
+@Transactional
 @Controller
 public class PaymentController {
 
 	private final Logger log = LoggerFactory.getLogger( getClass() );
 
 	@Autowired
-	private AnetClient anetClient;
+	private PayCommand payCommand;
+
+	@Autowired
+	private ClaimCommand claimCommand;
 
 	@Autowired
 	private Application application;
 
 	@Autowired
 	private HttpClient httpClient;
-
-	@Autowired
-	private PaymentClient paymentClient;
 
 	@Autowired
 	private Repository<String, Token> tokenRepository;
@@ -67,29 +70,70 @@ public class PaymentController {
 	}
 
 	@RequestMapping( value = "/buy", method = RequestMethod.POST )
-	public void buy( @ModelAttribute BuyCommand command, HttpServletResponse response ) throws IOException {
-		float amountDue = fromTokenValue( command.getAmount() );
-		response.sendRedirect( paymentClient.getPaymentUrl( amountDue ) );
+	public ModelAndView buy( @ModelAttribute BuyCommand command ) {
+
+		BuyContext context = new BuyContext( command );
+
+		context.setAmount( fromTokenValue( command.getAmount() ) );
+
+		return new ModelAndView( "buy", Context.NAME, context );
+
+	}
+
+	@RequestMapping( value = "/pay", method = RequestMethod.POST )
+	public void pay( @RequestParam String accountNumber, @RequestParam String expirationDate, @RequestParam float amount, HttpServletResponse response ) throws IOException {
+
+		String relayUrl = "https://money.twuni.org/exchange/claim";
+		long invoiceNumber = System.currentTimeMillis();
+		String notes = "";
+		String result = payCommand.execute( accountNumber, expirationDate, amount, relayUrl, invoiceNumber, notes );
+
+		response.setContentType( "text/html" );
+
+		response.getWriter().write( result );
+		response.getWriter().flush();
+		response.getWriter().close();
+
 	}
 
 	@RequestMapping( value = "/claim", method = RequestMethod.POST )
 	public ModelAndView claim( @RequestParam( "AMOUNT" ) float amount, @RequestParam( "TRANSACTION_ID" ) String transactionId, @RequestParam( "MD5_HASH" ) String signature ) {
 
-		Treasury treasury = new TreasuryClient( httpClient, application.getPreferredTreasury() );
-		Bank bank = new Bank( tokenRepository, treasury );
+		ClaimContext context = new ClaimContext( new org.twuni.money.exchange.web.command.ClaimCommand( amount, signature, transactionId ) );
+		Bank bank = getBank();
 
-		anetClient.getSignatureValidator( amount, transactionId ).validate( signature );
+		try {
+			String id = "IicF0Ip52BOIJ/lfBkeTVri2vjN1sUdjZPh8yJc5a6s=";
+			String secret = "czC4gI4tzUaAxXgBwBu78JRC7EdjewXYaXK3AOm/B+c=";
+			bank.deposit( new SimpleToken( "money.twuni.org", id, secret, 10000 ) );
+		} catch( RuntimeException exception ) {
+			log.info( "Initial deposit failed.", exception );
+		}
 
-		Token token = bank.withdraw( toTokenValue( amount ) );
+		try {
 
-		Payment payment = new Payment( amount, transactionId, token );
+			// claimCommand.execute( amount, transactionId, signature );
 
-		paymentRepository.save( payment );
+			Token token = bank.withdraw( toTokenValue( amount ) );
 
-		ClaimContext context = new ClaimContext( new ClaimCommand( amount, signature, transactionId ) );
-		context.setPayment( payment );
+			Payment payment = new Payment( amount, transactionId, token );
+
+			paymentRepository.save( payment );
+
+			context.setPayment( payment );
+
+		} catch( ValidationException exception ) {
+			context.getErrors().put( "validation", exception.getMessage() );
+		}
+
 		return new ModelAndView( "claim", Context.NAME, context );
 
+	}
+
+	private Bank getBank() {
+		Treasury treasury = new TreasuryClient( httpClient, application.getPreferredTreasury() );
+		Bank bank = new Bank( tokenRepository, treasury );
+		return bank;
 	}
 
 	@RequestMapping( value = "/sell", method = RequestMethod.POST )
@@ -104,18 +148,19 @@ public class PaymentController {
 			treasuryValidator.validate( token.getTreasury() );
 
 			Treasury treasury = new TreasuryClient( httpClient, token.getTreasury() );
+			Bank bank = new Bank( tokenRepository, treasury );
 			float paymentAmount = fromTokenValue( treasury.getValue( token ) );
 
 			if( paymentAmount <= 0 ) {
 				throw new IllegalArgumentException( "The token has expired." );
 			}
 
-			Token [] result = treasury.split( token, 1 ).toArray( new Token [0] );
+			bank.deposit( token );
 
 			try {
-				paymentClient.pay( command.getUsername(), paymentAmount );
+				throw new PaymentException( new UnsupportedOperationException() );
 			} catch( PaymentException exception ) {
-				context.setToken( treasury.merge( result[0], result[1] ) );
+				context.setToken( bank.withdraw( token.getValue() ) );
 				throw exception;
 			}
 
@@ -128,19 +173,15 @@ public class PaymentController {
 	}
 
 	private float fromTokenValue( int tokenValue ) {
-		return tokenValue * paymentClient.getExchangeRate();
+		return tokenValue * 0.01f;
 	}
 
 	private int toTokenValue( float paymentAmount ) {
-		return Float.valueOf( paymentAmount / paymentClient.getExchangeRate() ).intValue();
+		return Float.valueOf( paymentAmount / 0.01f ).intValue();
 	}
 
 	public void setHttpClient( HttpClient httpClient ) {
 		this.httpClient = httpClient;
-	}
-
-	public void setPaymentClient( PaymentClient paymentClient ) {
-		this.paymentClient = paymentClient;
 	}
 
 	public void setTokenRepository( Repository<String, Token> tokenRepository ) {

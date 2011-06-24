@@ -3,9 +3,11 @@
 	xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
 	">
 
 	<context:component-scan base-package="org.twuni.money.exchange"/>
@@ -18,34 +20,27 @@
 
 	<bean id="httpClient" class="org.apache.http.impl.client.DefaultHttpClient"/>
 	
-	<bean id="anetClient" class="org.twuni.money.exchange.anet.client.AnetClient">
-		<constructor-arg index="0" ref="httpClient"/>
-		<constructor-arg index="1" value="4ma69DX7P39"/>
-		<constructor-arg index="2" value="8CXrE6rTA265m25c"/>
-		<constructor-arg index="3" value=""/>
-		<constructor-arg index="4" value="false"/>
-	</bean>
-
-	<bean id="payCommand" class="org.twuni.money.exchange.anet.command.PayCommand">	
-		<constructor-arg index="0" ref="anetClient"/>
-		<constructor-arg index="1" value="https://test.authorize.net/gateway/transact.dll"/>
-	</bean>
-	
 	<bean id="claimCommand" class="org.twuni.money.exchange.anet.command.ClaimCommand">	
 		<constructor-arg index="0" ref="anetClient"/>
-		<constructor-arg index="1" value="https://www.example.com/path/to/claim/api"/>
 	</bean>
 	
-	<bean id="application" class="org.twuni.money.exchange.Application">
-		<property name="preferredTreasury" value="money.twuni.org"/>
+	<tx:annotation-driven/>
+
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"/>
 	</bean>
 
-	<bean id="treasuryValidator" class="org.twuni.money.exchange.util.StringArrayValidator">
-		<constructor-arg>
-			<array>
-				<value>money.twuni.org</value>
-			</array>
-		</constructor-arg>
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="packagesToScan" value="org.twuni.money.exchange.model"/>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+			</props>
+		</property>
 	</bean>
+
+	<import resource="exchange.xml"/>
 
 </beans>
