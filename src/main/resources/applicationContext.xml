@@ -12,10 +12,24 @@
 
 	<context:component-scan base-package="org.twuni.money.exchange"/>
 
+	<bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:exchange.properties"/>
+	</bean>
+
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="viewClass" value="org.twuni.money.exchange.web.view.StringTemplateView"/>
 		<property name="prefix" value="/WEB-INF/st/"/>
 		<property name="suffix" value=".st"/>
+	</bean>
+	
+	<bean id="bank" class="org.twuni.money.common.Bank">
+		<constructor-arg name="vault" ref="tokenRepository"/>
+		<constructor-arg name="treasury">
+			<bean class="org.twuni.money.common.TreasuryClient">
+				<constructor-arg name="client" ref="httpClient"/>
+				<constructor-arg name="domain" value="${treasury.domain}"/>
+			</bean>
+		</constructor-arg>
 	</bean>
 
 	<bean id="httpClient" class="org.apache.http.impl.client.DefaultHttpClient"/>
@@ -36,11 +50,42 @@
 		<property name="hibernateProperties">
 			<props>
 				<prop key="hibernate.hbm2ddl.auto">update</prop>
-				<prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+				<prop key="hibernate.dialect">${repository.hibernate.dialect}</prop>
 			</props>
 		</property>
 	</bean>
 
-	<import resource="exchange.xml"/>
+
+	<bean id="application" class="org.twuni.money.exchange.Application">
+		<property name="baseUrl" value="${baseUrl}"/>
+	</bean>
+
+	<bean id="treasuryValidator" class="org.twuni.money.exchange.util.StringArrayValidator">
+		<constructor-arg>
+			<array>
+				<value>${treasury.domain}</value>
+			</array>
+		</constructor-arg>
+	</bean>
+
+	<bean id="anetClient" class="org.twuni.money.exchange.anet.client.AnetClient">
+		<constructor-arg name="client" ref="httpClient"/>
+		<constructor-arg name="loginId" value="${net.authorize.loginId}"/>
+		<constructor-arg name="transactionKey" value="${net.authorize.transactionKey}"/>
+		<constructor-arg name="secret" value="${net.authorize.secret}"/>
+		<constructor-arg name="testMode" value="${net.authorize.testMode}"/>
+	</bean>
+
+	<bean id="payCommand" class="org.twuni.money.exchange.anet.command.PayCommand">
+		<constructor-arg name="client" ref="anetClient"/>
+		<constructor-arg name="url" value="${net.authorize.paymentUrl}"/>
+	</bean>
+
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${repository.jdbc.driver}"/>
+		<property name="url" value="${repository.jdbc.url}"/>
+		<property name="username" value="${repository.jdbc.username}"/>
+		<property name="password" value="${repository.jdbc.password}"/>
+	</bean>
 
 </beans>

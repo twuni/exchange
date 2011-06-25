@@ -7,10 +7,12 @@ import org.hibernate.SessionFactory;
 import org.hibernate.classic.Session;
 import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.twuni.money.common.Repository;
 import org.twuni.money.common.Token;
 import org.twuni.money.exchange.model.TokenEntity;
 
+@Transactional
 public class HibernateTokenRepository implements Repository<String, Token> {
 
 	@Autowired
@@ -47,7 +49,7 @@ public class HibernateTokenRepository implements Repository<String, Token> {
 
 	@Override
 	public void save( Token token ) {
-		sessionFactory.getCurrentSession().save( token );
+		sessionFactory.getCurrentSession().saveOrUpdate( token );
 	}
 
 }

@@ -4,12 +4,10 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,8 +17,7 @@ import org.twuni.money.common.Bank;
 import org.twuni.money.common.Repository;
 import org.twuni.money.common.SimpleToken;
 import org.twuni.money.common.Token;
-import org.twuni.money.common.Treasury;
-import org.twuni.money.common.TreasuryClient;
+import org.twuni.money.common.exception.InsufficientFundsException;
 import org.twuni.money.exchange.Application;
 import org.twuni.money.exchange.anet.command.ClaimCommand;
 import org.twuni.money.exchange.anet.command.PayCommand;
@@ -37,7 +34,6 @@ import org.twuni.money.exchange.web.model.SellContext;
 
 import com.google.gson.Gson;
 
-@Transactional
 @Controller
 public class PaymentController {
 
@@ -63,16 +59,13 @@ public class PaymentController {
 	private Application application;
 
 	@Autowired
-	private HttpClient httpClient;
-
-	@Autowired
-	private Repository<String, Token> tokenRepository;
-
-	@Autowired
 	private Repository<String, Payment> paymentRepository;
 
 	@Autowired
 	private Validator<String> treasuryValidator;
+
+	@Autowired
+	private Bank bank;
 
 	@RequestMapping( value = Path.FORM, method = RequestMethod.GET )
 	public String showForm() {
@@ -110,11 +103,12 @@ public class PaymentController {
 	public ModelAndView claim( @RequestParam( "AMOUNT" ) float amount, @RequestParam( "TRANSACTION_ID" ) String transactionId, @RequestParam( "MD5_HASH" ) String signature ) {
 
 		ClaimContext context = new ClaimContext( new org.twuni.money.exchange.web.command.ClaimCommand( amount, signature, transactionId ) );
-		Bank bank = getBank();
 
 		try {
 
 			claimCommand.execute( amount, transactionId, signature );
+
+			validate( bank );
 
 			Token token = bank.withdraw( toTokenValue( amount ) );
 
@@ -125,17 +119,14 @@ public class PaymentController {
 			context.setPayment( payment );
 
 		} catch( ValidationException exception ) {
-			context.getErrors().put( "validation", exception.getMessage() );
+			context.getErrors().put( "validation", "The transaction could not be processed due to a validation error." );
+		} catch( InsufficientFundsException exception ) {
+			// TODO: Request more funds from the treasury or communicate the transaction failure to Authorize.net.
+			context.getErrors().put( "funds", "This exchange does not have the funds necessary to complete the transaction." );
 		}
 
 		return new ModelAndView( "claim", Context.NAME, context );
 
-	}
-
-	private Bank getBank() {
-		Treasury treasury = new TreasuryClient( httpClient, application.getPreferredTreasury() );
-		Bank bank = new Bank( tokenRepository, treasury );
-		return bank;
 	}
 
 	@RequestMapping( value = Path.SELL, method = RequestMethod.POST )
@@ -148,14 +139,6 @@ public class PaymentController {
 			Token token = new Gson().fromJson( command.getToken(), SimpleToken.class );
 
 			treasuryValidator.validate( token.getTreasury() );
-
-			Treasury treasury = new TreasuryClient( httpClient, token.getTreasury() );
-			Bank bank = new Bank( tokenRepository, treasury );
-			float paymentAmount = fromTokenValue( treasury.getValue( token ) );
-
-			if( paymentAmount <= 0 ) {
-				throw new IllegalArgumentException( "The token has expired." );
-			}
 
 			bank.deposit( token );
 
@@ -174,6 +157,14 @@ public class PaymentController {
 
 	}
 
+	private void validate( Bank bank ) {
+		try {
+			bank.validate();
+		} catch( Exception exception ) {
+			log.info( exception.getMessage() );
+		}
+	}
+
 	private float fromTokenValue( int tokenValue ) {
 		return tokenValue * 0.01f;
 	}
@@ -182,12 +173,24 @@ public class PaymentController {
 		return Float.valueOf( paymentAmount / 0.01f ).intValue();
 	}
 
-	public void setHttpClient( HttpClient httpClient ) {
-		this.httpClient = httpClient;
+	public void setPayCommand( PayCommand payCommand ) {
+		this.payCommand = payCommand;
 	}
 
-	public void setTokenRepository( Repository<String, Token> tokenRepository ) {
-		this.tokenRepository = tokenRepository;
+	public void setClaimCommand( ClaimCommand claimCommand ) {
+		this.claimCommand = claimCommand;
+	}
+
+	public void setApplication( Application application ) {
+		this.application = application;
+	}
+
+	public void setPaymentRepository( Repository<String, Payment> paymentRepository ) {
+		this.paymentRepository = paymentRepository;
+	}
+
+	public void setBank( Bank bank ) {
+		this.bank = bank;
 	}
 
 	public void setTransactionRepository( Repository<String, Payment> transactionRepository ) {
