@@ -1,0 +1,35 @@
+# ----------------------------------------------------------------------------------------------
+# General Configuration
+
+# This is the base URL where you will be hosting this web application.
+baseUrl=https://example.com/exchange
+
+# This is the treasury your Exchange will be configured to work with.
+treasury.domain=example.com
+
+# ----------------------------------------------------------------------------------------------
+# Authorize.net Configuration
+#
+# Visit https://developer.authorize.net/testaccount to get your own loginId and transactionKey.
+# Leave the secret blank unless you have configured a custom MD5 hash.
+# You will need a merchant account if you want to process real transactions.
+
+net.authorize.loginId=
+net.authorize.transactionKey=
+net.authorize.secret=
+
+net.authorize.testMode=true
+net.authorize.paymentUrl=https://test.authorize.net/gateway/transact.dll
+
+# ----------------------------------------------------------------------------------------------
+# Database Configuration
+#
+# Important! Don't forget to add the library containing the JDBC driver to your classpath.
+
+repository.hibernate.dialect=org.hibernate.dialect.HSQLDialect
+repository.jdbc.driver=org.hsqldb.jdbc.JDBCDriver
+repository.jdbc.url=jdbc:hsqldb:file:data/exchange
+repository.jdbc.username=SA
+repository.jdbc.password=
+
+# ----------------------------------------------------------------------------------------------
