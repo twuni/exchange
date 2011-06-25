@@ -1,6 +1,10 @@
 <html>
 	<head>
 		<title>Claim</title>
+		<style type="test/css">
+			html { background-color: #FFF; color: #000; }
+			.error { font-weight: bold; color: #900; }
+		</style>
 	</head>
 	<body>
 		<h1>Claim.</h1>
