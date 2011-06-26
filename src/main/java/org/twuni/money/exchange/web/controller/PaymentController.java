@@ -89,6 +89,7 @@ public class PaymentController {
 		String relayUrl = application.getUrl( Path.CLAIM );
 		long invoiceNumber = System.currentTimeMillis();
 		String notes = "";
+
 		String result = payCommand.execute( accountNumber, expirationDate, amount, relayUrl, invoiceNumber, notes );
 
 		response.setContentType( "text/html" );
@@ -100,7 +101,7 @@ public class PaymentController {
 	}
 
 	@RequestMapping( value = Path.CLAIM, method = RequestMethod.POST )
-	public ModelAndView claim( @RequestParam( "AMOUNT" ) float amount, @RequestParam( "TRANSACTION_ID" ) String transactionId, @RequestParam( "MD5_HASH" ) String signature ) {
+	public ModelAndView claim( @RequestParam( "x_amount" ) float amount, @RequestParam( "x_trans_id" ) String transactionId, @RequestParam( "x_MD5_Hash" ) String signature ) {
 
 		ClaimContext context = new ClaimContext( new org.twuni.money.exchange.web.command.ClaimCommand( amount, signature, transactionId ) );
 
@@ -121,7 +122,8 @@ public class PaymentController {
 		} catch( ValidationException exception ) {
 			context.getErrors().put( "validation", "The transaction could not be processed due to a validation error." );
 		} catch( InsufficientFundsException exception ) {
-			// TODO: Request more funds from the treasury or communicate the transaction failure to Authorize.net.
+			// TODO: Request more funds from the treasury or communicate the transaction failure to
+			// Authorize.net.
 			context.getErrors().put( "funds", "This exchange does not have the funds necessary to complete the transaction." );
 		}
 

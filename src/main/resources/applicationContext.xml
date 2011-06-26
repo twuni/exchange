@@ -32,7 +32,11 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="httpClient" class="org.apache.http.impl.client.DefaultHttpClient"/>
+	<bean id="httpClient" class="org.apache.http.impl.client.DefaultHttpClient">
+		<constructor-arg name="conman">
+			<bean class="org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager"/>
+		</constructor-arg>
+	</bean>
 	
 	<bean id="claimCommand" class="org.twuni.money.exchange.anet.command.ClaimCommand">	
 		<constructor-arg index="0" ref="anetClient"/>
