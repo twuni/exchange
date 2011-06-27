@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,7 +102,7 @@ public class PaymentController {
 	}
 
 	@RequestMapping( value = Path.CLAIM, method = RequestMethod.POST )
-	public ModelAndView claim( @RequestParam( "x_amount" ) float amount, @RequestParam( "x_trans_id" ) String transactionId, @RequestParam( "x_MD5_Hash" ) String signature ) {
+	public ModelAndView claim( @RequestParam( "x_amount" ) float amount, @RequestParam( "x_trans_id" ) String transactionId, @RequestParam( "x_MD5_Hash" ) String signature, HttpServletResponse response ) throws IOException {
 
 		ClaimContext context = new ClaimContext( new org.twuni.money.exchange.web.command.ClaimCommand( amount, signature, transactionId ) );
 
@@ -122,9 +123,7 @@ public class PaymentController {
 		} catch( ValidationException exception ) {
 			context.getErrors().put( "validation", "The transaction could not be processed due to a validation error." );
 		} catch( InsufficientFundsException exception ) {
-			// TODO: Request more funds from the treasury or communicate the transaction failure to
-			// Authorize.net.
-			context.getErrors().put( "funds", "This exchange does not have the funds necessary to complete the transaction." );
+			response.sendError( HttpStatus.SC_INSUFFICIENT_SPACE_ON_RESOURCE, "This exchange does not have the funds necessary to complete the transaction." );
 		}
 
 		return new ModelAndView( "claim", Context.NAME, context );
