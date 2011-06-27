@@ -8,7 +8,7 @@ public class ClaimCommand extends Command {
 		super( client, "" );
 	}
 
-	public void execute( float amount, String transactionId, String signature ) {
+	public void execute( double amount, String transactionId, String signature ) {
 		client.getSignatureValidator( amount, transactionId ).validate( signature );
 	}
 

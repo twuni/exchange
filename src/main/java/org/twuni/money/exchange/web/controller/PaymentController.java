@@ -85,7 +85,7 @@ public class PaymentController {
 	}
 
 	@RequestMapping( value = Path.PAY, method = RequestMethod.POST )
-	public void pay( @RequestParam String accountNumber, @RequestParam String expirationDate, @RequestParam float amount, HttpServletResponse response ) throws IOException {
+	public void pay( @RequestParam String accountNumber, @RequestParam String expirationDate, @RequestParam double amount, HttpServletResponse response ) throws IOException {
 
 		String relayUrl = application.getUrl( Path.CLAIM );
 		long invoiceNumber = System.currentTimeMillis();
@@ -102,7 +102,7 @@ public class PaymentController {
 	}
 
 	@RequestMapping( value = Path.CLAIM, method = RequestMethod.POST )
-	public ModelAndView claim( @RequestParam( "x_amount" ) float amount, @RequestParam( "x_trans_id" ) String transactionId, @RequestParam( "x_MD5_Hash" ) String signature, HttpServletResponse response ) throws IOException {
+	public ModelAndView claim( @RequestParam( "x_amount" ) double amount, @RequestParam( "x_trans_id" ) String transactionId, @RequestParam( "x_MD5_Hash" ) String signature, HttpServletResponse response ) throws IOException {
 
 		ClaimContext context = new ClaimContext( new org.twuni.money.exchange.web.command.ClaimCommand( amount, signature, transactionId ) );
 
@@ -121,6 +121,7 @@ public class PaymentController {
 			context.setPayment( payment );
 
 		} catch( ValidationException exception ) {
+ 			log.warn( String.format( "$%.2f transaction %s could not be validated: %s", Double.valueOf( amount ), transactionId, exception.getMessage() ) );
 			context.getErrors().put( "validation", "The transaction could not be processed due to a validation error." );
 		} catch( InsufficientFundsException exception ) {
 			response.sendError( HttpStatus.SC_INSUFFICIENT_SPACE_ON_RESOURCE, "This exchange does not have the funds necessary to complete the transaction." );
@@ -171,8 +172,8 @@ public class PaymentController {
 		return tokenValue * 0.01f;
 	}
 
-	private int toTokenValue( float paymentAmount ) {
-		return Float.valueOf( paymentAmount / 0.01f ).intValue();
+	private int toTokenValue( double paymentAmount ) {
+		return Double.valueOf( paymentAmount / 0.01f ).intValue();
 	}
 
 	public void setPayCommand( PayCommand payCommand ) {

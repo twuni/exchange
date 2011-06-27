@@ -11,10 +11,10 @@ public class SignatureValidator implements Validator<String> {
 
 	private final String loginId;
 	private final String secret;
-	private final float amount;
+	private final double amount;
 	private final String transactionId;
 
-	public SignatureValidator( String loginId, String secret, float amount, String transactionId ) {
+	public SignatureValidator( String loginId, String secret, double amount, String transactionId ) {
 		this.loginId = loginId;
 		this.secret = secret;
 		this.amount = amount;
@@ -30,8 +30,10 @@ public class SignatureValidator implements Validator<String> {
 
 			digest.update( new StringBuilder().append( secret ).append( loginId ).append( transactionId ).append( amount ).toString().getBytes() );
 
-			if( !String.format( "%32s", new BigInteger( 1, digest.digest() ).toString( 16 ).toUpperCase() ).replaceAll( " ", "0" ).equals( signature ) ) {
-				throw new ValidationException();
+			String checksum = String.format( "%32s", new BigInteger( 1, digest.digest() ).toString( 16 ).toUpperCase() ).replaceAll( " ", "0" );
+
+			if( !checksum.equals( signature ) ) {
+				throw new ValidationException( String.format( "Expected [%s], was [%s]", signature, checksum ) );
 			}
 
 		} catch( NoSuchAlgorithmException exception ) {

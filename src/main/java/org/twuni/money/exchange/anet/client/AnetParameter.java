@@ -33,8 +33,8 @@ public enum AnetParameter {
 		return new BasicNameValuePair( key, value );
 	}
 
-	public NameValuePair toNameValuePair( float value ) {
-		return toNameValuePair( Float.toString( value ) );
+	public NameValuePair toNameValuePair( double value ) {
+		return toNameValuePair( Double.toString( value ) );
 	}
 
 	public NameValuePair toNameValuePair( long value ) {

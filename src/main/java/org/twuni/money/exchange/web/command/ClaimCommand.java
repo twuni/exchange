@@ -2,24 +2,24 @@ package org.twuni.money.exchange.web.command;
 
 public class ClaimCommand {
 
-	private float amount;
+	private double amount;
 	private String transactionId;
 	private String signature;
 
 	public ClaimCommand() {
 	}
 
-	public ClaimCommand( float amount, String transactionId, String signature ) {
+	public ClaimCommand( double amount, String transactionId, String signature ) {
 		this.amount = amount;
 		this.transactionId = transactionId;
 		this.signature = signature;
 	}
 
-	public float getAmount() {
+	public double getAmount() {
 		return amount;
 	}
 
-	public void setAmount( float amount ) {
+	public void setAmount( double amount ) {
 		this.amount = amount;
 	}
 

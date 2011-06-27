@@ -48,7 +48,7 @@ public class AnetClient {
 		} );
 	}
 
-	public List<NameValuePair> getFingerprint( float amount ) {
+	public List<NameValuePair> getFingerprint( double amount ) {
 
 		long sequence = random.nextInt( 10000 ) * 1000 + random.nextInt( 1000 );
 		long timestamp = System.currentTimeMillis() / 1000;
@@ -82,7 +82,7 @@ public class AnetClient {
 		return http.post( url, parameters );
 	}
 
-	public Validator<String> getSignatureValidator( float amount, String transactionId ) {
+	public Validator<String> getSignatureValidator( double amount, String transactionId ) {
 		return new SignatureValidator( loginId, secret, amount, transactionId );
 	}
 

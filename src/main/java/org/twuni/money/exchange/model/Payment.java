@@ -6,13 +6,13 @@ public class Payment {
 
 	private Integer id;
 	private String transactionId;
-	private float amount;
+	private double amount;
 	private Token token;
 
 	public Payment() {
 	}
 
-	public Payment( float amount, String transactionId, Token token ) {
+	public Payment( double amount, String transactionId, Token token ) {
 		this.amount = amount;
 		this.transactionId = transactionId;
 		this.token = token;
@@ -26,11 +26,11 @@ public class Payment {
 		this.transactionId = id;
 	}
 
-	public float getAmount() {
+	public double getAmount() {
 		return amount;
 	}
 
-	public void setAmount( float amount ) {
+	public void setAmount( double amount ) {
 		this.amount = amount;
 	}
 

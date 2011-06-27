@@ -21,7 +21,7 @@ abstract class Command {
 		return client.post( url, parameters );
 	}
 
-	protected String execute( List<NameValuePair> parameters, float amount ) throws IOException {
+	protected String execute( List<NameValuePair> parameters, double amount ) throws IOException {
 		parameters.addAll( client.getFingerprint( amount ) );
 		return execute( parameters );
 	}
