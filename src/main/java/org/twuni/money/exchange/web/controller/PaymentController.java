@@ -124,6 +124,7 @@ public class PaymentController {
 			context.getErrors().put( "validation", "The transaction could not be processed due to a validation error." );
 		} catch( InsufficientFundsException exception ) {
 			response.sendError( HttpStatus.SC_INSUFFICIENT_SPACE_ON_RESOURCE, "This exchange does not have the funds necessary to complete the transaction." );
+			log.error( "Transaction failed due to insufficient funds in the exchange." );
 		}
 
 		return new ModelAndView( "claim", Context.NAME, context );
