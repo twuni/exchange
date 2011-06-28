@@ -121,7 +121,7 @@ public class PaymentController {
 			context.setPayment( payment );
 
 		} catch( ValidationException exception ) {
- 			log.warn( String.format( "$%.2f transaction %s could not be validated: %s", Double.valueOf( amount ), transactionId, exception.getMessage() ) );
+			log.warn( String.format( "$%.2f transaction %s could not be validated: %s", Double.valueOf( amount ), transactionId, exception.getMessage() ) );
 			context.getErrors().put( "validation", "The transaction could not be processed due to a validation error." );
 		} catch( InsufficientFundsException exception ) {
 			response.sendError( HttpStatus.SC_INSUFFICIENT_SPACE_ON_RESOURCE, "This exchange does not have the funds necessary to complete the transaction." );
