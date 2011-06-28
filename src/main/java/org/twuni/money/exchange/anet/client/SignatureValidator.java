@@ -28,7 +28,7 @@ public class SignatureValidator implements Validator<String> {
 
 			MessageDigest digest = MessageDigest.getInstance( "MD5" );
 
-			digest.update( new StringBuilder().append( secret ).append( loginId ).append( transactionId ).append( amount ).toString().getBytes() );
+			digest.update( new StringBuilder().append( secret ).append( loginId ).append( transactionId ).append( String.format( "%.2f", Double.valueOf( amount ) ) ).toString().getBytes() );
 
 			String checksum = String.format( "%32s", new BigInteger( 1, digest.digest() ).toString( 16 ).toUpperCase() ).replaceAll( " ", "0" );
 
