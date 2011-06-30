@@ -4,7 +4,6 @@ import org.twuni.money.common.Token;
 
 public class Payment {
 
-	private Integer id;
 	private String transactionId;
 	private double amount;
 	private Token token;
@@ -40,14 +39,6 @@ public class Payment {
 
 	public Token getToken() {
 		return token;
-	}
-
-	public void setId( Integer id ) {
-		this.id = id;
-	}
-
-	public Integer getId() {
-		return id;
 	}
 
 }
