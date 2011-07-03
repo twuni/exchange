@@ -22,6 +22,13 @@ net.authorize.testMode=true
 net.authorize.paymentUrl=https://test.authorize.net/gateway/transact.dll
 
 # ----------------------------------------------------------------------------------------------
+# Google Checkout
+
+google.checkout.merchantId=1234567890
+google.checkout.merchantKey=HsYXFoZfHAqyLcCRYeH8qQ
+google.checkout.checkoutUrl=https://checkout.google.com/api/checkout/v2/checkout/Merchant/1234567890
+
+# ----------------------------------------------------------------------------------------------
 # Database Configuration
 #
 # Important! Don't forget to add the library containing the JDBC driver to your classpath.
