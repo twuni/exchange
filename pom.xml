@@ -9,10 +9,25 @@
 	<packaging>war</packaging>
 
 	<name>Exchange</name>
+
 	<description>
 		The Exchange is a web application designed to facilitate the transfer of funds
 		issued by one Treasury into and from other forms of currency.
 	</description>
+
+	<scm>
+		<developerConnection>scm:git:ssh:git@github.com:twuni/exchange.git</developerConnection>
+		<connection>scm:git:ssh:git@github.com:twuni/exchange.git</connection>
+		<url>scm:git:https://twuni@github.com/twuni/exchange.git</url>
+	</scm>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
 	<build>
 
